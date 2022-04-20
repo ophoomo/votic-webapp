@@ -5,6 +5,7 @@ const initialState = {
     id: '',
     expire: 0,
     name: '',
+    gender: '',
     group: [],
 };
 
@@ -21,6 +22,10 @@ export const authReducer = (state = initialState, action: AuthActionInterface) :
         case AuthActionType.SET_NAME:
             return {
                 ...state, name: action.payload
+            };
+        case AuthActionType.SET_GENDER:
+            return {
+                ...state, gender: action.payload
             };
         case AuthActionType.SET_GROUP:
             return {

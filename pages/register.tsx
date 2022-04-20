@@ -76,7 +76,7 @@ const Login: NextPage = () => {
 
     const IsMore10 = (id : string, value : string) : boolean => {
         if (IsNotEmpty(id, value)) {
-            if(value.length >= 0) {
+            if(value.length >= 10) {
                 setError(prevState => ({...prevState, [id]:false}));
                 return true;
             }
@@ -178,9 +178,9 @@ const Login: NextPage = () => {
                             <option value="0">หญิง</option>
                         </select>
                     </div>
-                    <button onClick={() => onSubmit()} className="button mb-1 is-info is-fullwidth">ยืนยัน</button>
+                    <button onClick={() => onSubmit()} className="button mb-1 is-success is-fullwidth">ยืนยัน</button>
                     <Link href={'/login'}>
-                        <button className="button is-info is-outlined is-fullwidth">กลับ</button>
+                        <button className="button is-success is-outlined is-fullwidth">กลับ</button>
                     </Link>
                 </div>
             </div>

@@ -39,7 +39,17 @@ const GroupMember: NextPage = () => {
     const getGroup = () => {
         const group = new Group();
         group.find(id as string).then(res => {
-            setGroup(res.data.data);
+            if (res.data.status) {
+                setGroup(res.data.data);
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: res.data.message,
+                }).then(() => {
+                    router.push('/');
+                });
+            }
         }).catch(() => {
           Swal.fire({
               icon: 'error',
@@ -80,10 +90,49 @@ const GroupMember: NextPage = () => {
         });
     }
 
+    const changeOwner = (idMember: string) => {
+        const group = new Group();
+        
+        Swal.fire({
+            icon: 'warning',
+            title: 'คำเตือน',
+            text: 'คุณต้องการที่จะ เปลื่ยนหัวหน้ากลุ่ม ใช่ หรือ ไม่?',
+            timer: 10000,
+            showConfirmButton: true,
+            showCancelButton: true,
+            cancelButtonText: 'ไม่',
+            confirmButtonText: 'ใช่',
+        }).then(result => {
+            if (result.isConfirmed) {
+                group.changeOwner(id as string, idMember).then(res => {
+                    document.location.reload();
+                }).catch(() => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดจากทางเซิฟเวอร์',
+                    }).then(() => {
+                        router.push('/');
+                    });
+                });
+            }
+        });
+    }
+
     const getMember = () => {
         const group = new Group();
         group.findMember(id as string).then(res => {
-            setMember(res.data.data.member);
+            if (res.data.status) {
+                setMember(res.data.data.member);
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: res.data.message,
+                }).then(() => {
+                    router.push('/');
+                });
+            }
         }).catch(() => {
           Swal.fire({
               icon: 'error',
@@ -96,9 +145,11 @@ const GroupMember: NextPage = () => {
     }
 
     useEffect(() => {
-        getGroup();
-        getMember();
-    }, []);
+        if (id !== undefined) {
+            getGroup();
+            getMember();
+        }
+    }, [id]);
 
 
     return (
@@ -128,7 +179,10 @@ const GroupMember: NextPage = () => {
                                         <td>{item.id === group.owner && <i className="bi bi-trophy-fill has-text-warning mr-2"></i>} { item.name }</td>
                                         {
                                             (group.owner === authStore.id && item.id !== group.owner) ?
-                                            <td><button onClick={() => removeMember(item.id) } className='button is-danger'><i className="bi bi-person-x-fill"></i></button></td>
+                                            <div>
+                                                <td><button onClick={() => changeOwner(item.id) } className='button is-warning'><i className="bi bi-trophy-fill"></i></button></td>
+                                                <td><button onClick={() => removeMember(item.id) } className='button is-danger'><i className="bi bi-person-x-fill"></i></button></td>
+                                            </div>
                                             :
                                             <td></td>
                                         }

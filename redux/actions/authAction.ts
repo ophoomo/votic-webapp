@@ -22,6 +22,13 @@ export const setName = (name : string) : AuthActionInterface => {
     };
 }
 
+export const setGender = (gender : string) : AuthActionInterface => {
+    return {
+        type: AuthActionType.SET_GENDER,
+        payload: gender
+    };
+}
+
 export const setGroup = (group : string) : AuthActionInterface => {
     return {
         type: AuthActionType.SET_GROUP,

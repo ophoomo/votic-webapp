@@ -16,6 +16,7 @@ const Home: NextPage = () => {
   interface groupStruct {
     id: string
     name: string
+    member: number
   };
 
   const authStore: AuthState = useSelector(getAuthState);
@@ -53,7 +54,7 @@ const Home: NextPage = () => {
         </div>
         <div className='is-flex is-flex-wrap-wrap'>
           {
-            Data.length > 0 && Data.map(item => (<GroupComponet key={item.id} id={item.id} name={item.name} />))
+            Data.length > 0 && Data.map(item => (<GroupComponet key={item.id} member={item.member} id={item.id} name={item.name} />))
           }         
         </div>
       </div>

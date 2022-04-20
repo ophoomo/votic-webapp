@@ -1,7 +1,6 @@
 import axios from "axios";
+import { host } from "../config/dev";
 
-
-const host = "http://localhost:5560";
 
 export class Auth {
     verify() {

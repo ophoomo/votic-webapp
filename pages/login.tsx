@@ -118,9 +118,9 @@ const Login: NextPage = () => {
                         <input onKeyDown={onEnter} onChange={onInputData} id="password"
                          type="password" placeholder='รหัสผ่านจำนวน 10 ตีวขึ้นไป' className={`input ${IsError(Error.password)}`} />
                     </div>
-                    <button onClick={() => onSubmit()} className="button mb-1 is-info is-fullwidth">เข้าสู่ระบบ</button>
+                    <button onClick={() => onSubmit()} className="button mb-1 is-success is-fullwidth">เข้าสู่ระบบ</button>
                     <Link href={'/register'}>
-                        <button className="button is-info is-outlined is-fullwidth">สมัครสมาชิก</button>
+                        <button className="button is-success is-outlined is-fullwidth">สมัครสมาชิก</button>
                     </Link>
                 </div>
             </div>

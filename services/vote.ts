@@ -1,10 +1,12 @@
 import axios from "axios";
+import { host } from "../config/dev";
 
 export class Vote {
-    find() {
-        return axios.get(``, {
+    find(id: string) {
+        return axios.get(`${host}/vote/${id}/post/all`, {
             headers: {
-                'Authorization' : 'Bearer ' + localStorage.getItem('token')
+                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                'Version-Header' : 1
             }
         });
     }
@@ -17,12 +19,16 @@ export class Vote {
             }
         });
     }
-    create() {
-        return axios.post(``, {
-
+    create(idgroup: string, header: string, timeout: string, select: Array<string>) {
+        return axios.post(`${host}/vote`, {
+            idgroup: idgroup,
+            timeout: timeout,
+            header: header,
+            select: select,
         }, {
             headers: {
-                'Authorization' : 'Bearer ' + localStorage.getItem('token')
+                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                'Version-Header' : 1
             }
         });
     }

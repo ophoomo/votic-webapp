@@ -1,14 +1,20 @@
-import { useRef, useState, KeyboardEvent, ChangeEvent } from "react";
+import { useRef, useState, KeyboardEvent, ChangeEvent, useEffect } from "react";
 import Swal from "sweetalert2";
 import { Group } from "../services/group";
 
-const Create: React.VFC = () => {
+interface dataStruct {
+  id: string
+  name: string
+}
+
+const EditGroup: React.VFC<dataStruct> = ({name, id}) => {
 
   const [Status, setStatus] = useState(false);
 
   const Data = useRef({
-    name: ''
+    name: name
   });
+
   const [error, setError] = useState({
     name: false
   });
@@ -35,7 +41,7 @@ const Create: React.VFC = () => {
   const onSubmit = () => {
     if(IsNotEmpty('name', Data.current.name)) {
       const group = new Group();
-      group.create(Data.current.name).then(res => {
+      group.update(Data.current.name, id).then(res => {
         Swal.fire({
             icon: res.data.status ? 'success' : 'warning',
             title: res.data.status ? 'สำเร็จ' : 'คำเตือน',
@@ -77,16 +83,21 @@ const Create: React.VFC = () => {
     Data.current = {...Data.current, [event.target.id]: event.target.value};
   }
 
+  useEffect(() => {
+    (document.getElementById('name') as HTMLInputElement).value = name;
+  }, []);
+
   return (
     <>
-      <button onClick={() => open()} className='button is-success is-outlined mr-2'>สร้างห้อง</button>
+      <button onClick={() => open()} className='button is-success is-outlined mt-2 is-fullwidth'>
+        <i className="bi bi-tools mr-2"></i> แก้ไขกลุ่ม</button>
       <div className={`modal ${Status && 'is-active'}`}>
         <div onClick={() => close()} className="modal-background"></div>
         <div className="modal-content">
             <div className="card">
               <div className="card-header">
                 <p className="card-header-title">
-                  สร้างห้อง
+                  <i className="bi bi-tools mr-2"></i> แก้ไขกลุ่ม
                 </p>
               </div>
               <div className="card-content">
@@ -105,5 +116,5 @@ const Create: React.VFC = () => {
   )
 }
 
-export default Create
+export default EditGroup
 

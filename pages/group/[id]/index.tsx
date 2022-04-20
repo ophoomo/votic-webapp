@@ -2,13 +2,18 @@ import type { NextPage } from 'next'
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 import CreateVote from '../../../components/CreateVote';
+import EditGroup from '../../../components/EditGroup';
 import HeaderGroup from '../../../components/HeaderGroup';
 import Navbar from '../../../components/Navbar';
-import Vote from '../../../components/Voute';
+import VoteComponent from '../../../components/Voute';
 import MainLayout from '../../../layouts/main';
+import { getAuthState } from '../../../redux/Selectors';
+import { AuthState } from '../../../redux/types/authType';
 import { Group } from '../../../services/group';
+import { Vote } from '../../../services/vote';
 
 const GroupID: NextPage = () => {
 
@@ -18,19 +23,70 @@ const GroupID: NextPage = () => {
         owner: string
     }
 
+    interface voteStruct {
+        _id: string
+        score: Array<number>
+        voted: Array<string>
+        owner: string
+        header: string
+        timeout: string
+        select: Array<string>
+    }
+
     const [group, setGroup] = useState<groupStruct>({
         name: '',
         code: '',
         owner: '',
     });
 
+    const [vote, setVote] = useState<Array<voteStruct>>([]);
+
     const router = useRouter();
     const { id } = router.query;
+
+    const authStore: AuthState = useSelector(getAuthState);
 
     const getGroup = () => {
         const group = new Group();
         group.find(id as string).then(res => {
-            setGroup(res.data.data);
+            if (res.data.status) {
+                setGroup(res.data.data);
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: res.data.message,
+                }).then(() => {
+                    router.push('/');
+                });
+            }
+        }).catch(() => {
+          Swal.fire({
+              icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
+              text: 'เกิดข้อผิดพลาดจากทางเซิฟเวอร์',
+          }).then(() => {
+              router.push('/');
+          })
+        });
+    }
+
+    const getVote = () => {
+        const vote = new Vote();
+        vote.find(id as string).then(res => {
+            if (res.data.status) {
+                setVote(res.data.data);
+                console.log(res.data.data);
+                console.log(vote);
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'คำเตือน',
+                    text: res.data.message,
+                }).then(() => {
+                    router.push('/');
+                });
+            }
         }).catch(() => {
           Swal.fire({
               icon: 'error',
@@ -79,8 +135,11 @@ const GroupID: NextPage = () => {
     }
 
     useEffect(() => {
-        getGroup();
-    }, []);
+        if(id != undefined) {
+            getGroup();
+            getVote();
+        }
+    }, [id]);
 
     return (
     <MainLayout>
@@ -99,15 +158,16 @@ const GroupID: NextPage = () => {
                     </div>
                     <div className='card mt-5'>
                         <div className="card-content">
-                            <CreateVote />
+                            <CreateVote id={id as string} />
                             <Link href={`${id}/member`}>
-                                <button className='button is-info is-outlined is-fullwidth mt-2'>
+                                <button className='button is-success is-outlined is-fullwidth mt-2'>
                                  <i className="bi bi-people-fill mr-2"></i> สมาชิก
                                 </button>
                             </Link>
-                            <button className='button is-info is-outlined is-fullwidth mt-2'>
-                                <i className="bi bi-tools mr-2"></i> แก้ไขกลุ่ม
-                            </button>
+                            {
+                            (group.name !== '' && authStore.id === group.owner) &&
+                            <EditGroup name={group.name} id={id as string} />
+                            }
                             <button onClick={() => leave()} className='button is-danger is-outlined is-fullwidth mt-2'>
                                 <i className="bi bi-door-open-fill mr-2"></i> ออกจากกลุ่ม
                             </button>
@@ -115,15 +175,10 @@ const GroupID: NextPage = () => {
                     </div>
                 </div>
                 <div className='column'>
-                    <Vote />
-                    <Vote />
-                    <Vote />
-                    <Vote />
-                    <Vote />
-                    <Vote />
-                    <Vote />
-                    <Vote />
-                    <Vote />
+                    {
+                        vote.length > 0 &&
+                        vote.map((item, index) => <VoteComponent header={item.header} key={index} />)
+                    }
                 </div>
             </div>
         </div>

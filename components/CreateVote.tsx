@@ -1,15 +1,23 @@
 import { useRef, useState, KeyboardEvent, ChangeEvent } from "react";
+import Swal from "sweetalert2";
+import { Vote } from "../services/vote";
 
-const CreateVote: React.VFC = () => {
+interface dataStruct {
+  id: string
+};
+
+const CreateVote: React.VFC<dataStruct> = ({id}) => {
 
   const [Status, setStatus] = useState(false);
 
   interface voteStruct {
     header: string
+    timeout: string
   };
 
   const Data = useRef({
     header: '',
+    timeout: '',
   });
 
   const [select, setSelect] = useState<Array<string>>([]);
@@ -37,14 +45,65 @@ const CreateVote: React.VFC = () => {
     setStatus(false);
   }
 
-  const onSubmit = () => {
-    if(IsNotEmpty('header', Data.current.header)) {
+  const checkSelect = (): boolean => {
+    let index = 0;
+    for(const item of select) {
+      const element = (document.getElementById('select-' + index) as HTMLInputElement);
+      if (item === '') {
+        element.focus();
+        element.classList.add('is-danger');
+        return false;
+      }
+      element.classList.remove('is-danger');
+      index++;
+    }
+    return true;
+  }
 
+  const onSubmit = () => {
+    if(IsNotEmpty('header', Data.current.header) && IsNotEmpty('timeout', Data.current.timeout) && checkSelect()) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'คำเตือน',
+            text: 'คุณต้องการที่จะ สร้างโพส ใช่ หรือ ไม่?',
+            timer: 10000,
+            showConfirmButton: true,
+            showCancelButton: true,
+            cancelButtonText: 'ไม่',
+            confirmButtonText: 'ใช่',
+        }).then(result => {
+            if(result.isConfirmed) {
+              const vote = new Vote();
+              vote.create(id, Data.current.header, Data.current.timeout, select).then(res => {
+                  Swal.fire({
+                    icon: res.data.status ? 'success' : 'warning',
+                    title: res.data.status ? 'สำเร็จ' : 'คำเตือน',
+                    text: res.data.message,
+                }).then(() => {
+                    if(res.data.status) {
+                      document.location.reload();
+                    }
+                });
+              }).catch(() => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'เกิดข้อผิดพลาดจากทางเซิฟเวอร์',
+                    });
+              });
+            }
+        });
     }
   }
 
   const addSelect = () => {
-    setSelect(prevState => ([...prevState, 'asdasd']));
+    setSelect(prevState => ([...prevState, '']));
+  }
+
+  const removeSelect = (index : number) => {
+    let newData = [...select];
+    newData.splice(index, 1);
+    setSelect(newData);
   }
 
   const onEnter = (event : KeyboardEvent<HTMLInputElement>) => {
@@ -69,9 +128,16 @@ const CreateVote: React.VFC = () => {
     Data.current = {...Data.current, [event.target.id]: event.target.value};
   }
 
+  const InputDataSelect = (event: ChangeEvent<HTMLInputElement>) => {
+    const id: number = parseInt(event.target.id.split('-')[1]);
+    let data = [...select];
+    data[id] = event.target.value;
+    setSelect(data);
+  }
+
   return (
     <>
-      <button onClick={() => open()} className='button is-info is-outlined is-fullwidth'>
+      <button onClick={() => open()} className='button is-success is-outlined is-fullwidth'>
         <i className="bi bi-megaphone-fill mr-2"></i> เปิดโหวต
       </button>
       <div className={`modal ${Status && 'is-active'}`}>
@@ -90,20 +156,26 @@ const CreateVote: React.VFC = () => {
                   className={`input ${isError(error.header)}`} />
                 </div>
                 <div className="mb-2">
-                  <label htmlFor="expire">เวลาปิด</label>
-                  <input onChange={onInputData} onKeyDown={onEnter} id="header" type="datetime-local" 
+                  <label htmlFor="timeout">เวลาปิด</label>
+                  <input onChange={onInputData} onKeyDown={onEnter} id="timeout" type="datetime-local" 
                   className={`input ${isError(error.header)}`} />
                 </div>
                 {
+                select.length > 0 &&
                 select.map((item, index) => (
                   <div className="mb-2" key={index}>
-                    <label htmlFor="select">ตัวเลือกที่ {index + 1}</label>
-                    <input id={"select-" + index + 1} type="text" className={`input ${isError(error.header)}`} />
+                    <label htmlFor={`select-${index}`}>ตัวเลือกที่ {index + 1}</label>
+                    <div className="is-flex">
+                      <input value={item} id={"select-" + (index)} type="text"
+                       onChange={InputDataSelect}
+                       className={`input ${isError(error.header)}`} />
+                      <button onClick={() => removeSelect(index)} className="button is-danger ml-2">x</button>
+                    </div>
                   </div>
                 ))
                 }
                 <button onClick={() => addSelect()} className="button is-success is-outlined is-fullwidth">+</button>
-                <button onClick={() => onSubmit()} className="button is-info is-fullwidth mt-5">ยืนยัน</button>
+                <button onClick={() => onSubmit()} className="button is-success is-fullwidth mt-5">ยืนยัน</button>
               </div>
             </div>
 

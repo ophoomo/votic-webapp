@@ -20,11 +20,11 @@ const Join: React.VFC = () => {
 
   const open = async () => {
     document.addEventListener('keydown', onEsc);
-    const textinCopy = await navigator.clipboard.readText();
-    if (textinCopy.length === 7) {
-      Data.current.code = textinCopy;
-      (document.getElementById('code') as HTMLInputElement).value = textinCopy;
-    }
+    // const textinCopy = await navigator.clipboard.readText();
+    // if (textinCopy.length === 7) {
+    //   Data.current.code = textinCopy;
+    //   (document.getElementById('code') as HTMLInputElement).value = textinCopy;
+    // }
     setStatus(true);
     setTimeout(() => {
       (document.getElementById('code') as HTMLInputElement).focus();
@@ -95,7 +95,7 @@ const Join: React.VFC = () => {
 
   return (
     <>
-    <button onClick={() => open()} className='button is-info mr-2'>เข้าร่วมห้อง</button>
+    <button onClick={() => open()} className='button is-success mr-2'>เข้าร่วมห้อง</button>
     <div className={`modal ${Status && 'is-active'}`}>
       <div onClick={() => close()} className="modal-background"></div>
       <div className="modal-content">
@@ -111,7 +111,7 @@ const Join: React.VFC = () => {
               <input onKeyDown={onEnter} onChange={onInputData} id="code" type="text"
                className={`input ${isError(error.code)}`} />
             </div>
-            <button onClick={() => onSubmit()} className="button is-info is-fullwidth mt-2">ยืนยัน</button>
+            <button onClick={() => onSubmit()} className="button is-success is-fullwidth mt-2">ยืนยัน</button>
           </div>
         </div>
       </div>

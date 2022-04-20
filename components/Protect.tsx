@@ -1,11 +1,12 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
-import { setExpire, setGroup, setID, setName } from "../redux/actions/authAction";
+import { setExpire, setGender, setGroup, setID, setName } from "../redux/actions/authAction";
 import { getAuthState } from "../redux/Selectors";
 import { AuthState } from "../redux/types/authType";
 import { Auth } from "../services/auth";
 import { JWT, Payload } from "../utils/jwt";
+import loadingcss from '../styles/loading.module.css';
 
 const Protect: React.FC = ({children}) => {
 
@@ -38,6 +39,7 @@ const Protect: React.FC = ({children}) => {
             dispatch(setName(`${res.data.data.firstname} ${res.data.data.lastname}`));
             dispatch(setGroup(res.data.data.group));
             dispatch(setExpire(payload.exp));
+            dispatch(setGender(res.data.data.gender));
             setStatus(true);
         }).catch(() => {
             localStorage.removeItem('token');
@@ -59,7 +61,12 @@ const Protect: React.FC = ({children}) => {
 
     if (!Status) {
         return (
-            <h1>loading</h1>
+            <div style={{height: '100vh', width: '100%', display: 'flex', justifyContent: 'center',
+             alignItems: 'center', flexDirection: 'column'}}>
+                <div className={loadingcss.ldsroller}><div></div><div></div><div></div><div></div><div></div><div>
+                    </div><div></div><div></div></div>
+                <h3 className="title is-3 mt-5">กำลังโหลด</h3>
+            </div>
         )
     }
 
