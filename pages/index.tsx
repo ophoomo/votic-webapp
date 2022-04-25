@@ -10,6 +10,7 @@ import { getAuthState } from '../redux/Selectors'
 import { Group } from '../services/group'
 import { AuthState } from '../redux/types/authType'
 import Swal from 'sweetalert2'
+import ReactTooltip from 'react-tooltip'
 
 const Home: NextPage = () => {
   
@@ -51,6 +52,7 @@ const Home: NextPage = () => {
         <div className='mb-5'>
           <Join />
           <Create />
+          <ReactTooltip place='bottom' id="home" effect='solid' />
         </div>
         <div className='is-flex is-flex-wrap-wrap'>
           {

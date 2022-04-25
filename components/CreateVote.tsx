@@ -153,7 +153,8 @@ const CreateVote: React.VFC<dataStruct> = ({id}) => {
 
   return (
     <>
-      <button onClick={() => open()} className='button is-success is-outlined is-fullwidth'>
+      <button onClick={() => open()} data-for="group_control" data-tip="สร้างโพส เพื่อให้สมาชิก ได้โหวต"
+      className='button is-success is-outlined is-fullwidth'>
         <i className="bi bi-megaphone-fill mr-2"></i> เปิดโหวต
       </button>
       <div className={`modal ${Status && 'is-active'}`}>

@@ -1,4 +1,5 @@
 import { useRef, useState, KeyboardEvent, ChangeEvent, useEffect } from "react";
+import ReactTooltip from "react-tooltip";
 import Swal from "sweetalert2";
 import { Group } from "../services/group";
 
@@ -89,8 +90,11 @@ const EditGroup: React.VFC<dataStruct> = ({name, id}) => {
 
   return (
     <>
-      <button onClick={() => open()} className='button is-success is-outlined mt-2 is-fullwidth'>
-        <i className="bi bi-tools mr-2"></i> แก้ไขกลุ่ม</button>
+      <ReactTooltip id="group_control" place="right" effect="solid" />
+      <button onClick={() => open()} data-for="group_control" data-tip="แก้ไขข้อมูลของกลุ่ม"
+       className='button is-success is-outlined mt-2 is-fullwidth'>
+        <i className="bi bi-tools mr-2"></i> แก้ไขกลุ่ม
+      </button>
       <div className={`modal ${Status && 'is-active'}`}>
         <div onClick={() => close()} className="modal-background"></div>
         <div className="modal-content">

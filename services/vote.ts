@@ -41,6 +41,14 @@ export class Vote {
             }
         });
     }
+    close(idgroup: string, idpost: string) {
+        return axios.put(`${host}/vote/${idgroup}/${idpost}/close`, {},{
+            headers: {
+                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                'Version-Header' : 1
+            }
+        });
+    }
     remove(idgroup: string, idpost: string) {
         return axios.delete(`${host}/vote/${idgroup}/${idpost}`, {
             headers: {

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
 import Swal from 'sweetalert2';
 import CreateVote from '../../../components/CreateVote';
 import EditGroup from '../../../components/EditGroup';
@@ -31,6 +32,7 @@ const GroupID: NextPage = () => {
         header: string
         timeout: string
         select: Array<string>
+        open: boolean
     }
 
     const [group, setGroup] = useState<groupStruct>({
@@ -76,8 +78,6 @@ const GroupID: NextPage = () => {
         vote.find(id as string).then(res => {
             if (res.data.status) {
                 setVote(res.data.data);
-                console.log(res.data.data);
-                console.log(vote);
             } else {
                 Swal.fire({
                     icon: 'warning',
@@ -153,14 +153,17 @@ const GroupID: NextPage = () => {
                             <p className="card-header-title">โค้ดเข้าร่วมห้อง</p>
                         </div>
                         <div className="card-content">
-                            <h1 style={{cursor: 'pointer'}} onClick={() => clickCopy() } id="codeRoom" className='title is-2 has-text-centered'>{group.code}</h1>
+                            <h1 style={{cursor: 'pointer'}} onClick={() => clickCopy() } id="codeRoom"
+                             className='title is-2 has-text-centered'>{group.code}</h1>
                         </div>
                     </div>
                     <div className='card mt-5'>
                         <div className="card-content">
+                            <ReactTooltip id='group_control' effect='solid' place='right' />
                             <CreateVote id={id as string} />
                             <Link href={`${id}/member`}>
-                                <button className='button is-success is-outlined is-fullwidth mt-2'>
+                                <button data-for="group_control" data-tip="ดูสมาชิกทั้งหมดของกลุ่มนี้"
+                                 className='button is-success is-outlined is-fullwidth mt-2'>
                                  <i className="bi bi-people-fill mr-2"></i> สมาชิก
                                 </button>
                             </Link>
@@ -168,7 +171,9 @@ const GroupID: NextPage = () => {
                             (group.name !== '' && authStore.id === group.owner) &&
                             <EditGroup name={group.name} id={id as string} />
                             }
-                            <button onClick={() => leave()} className='button is-danger is-outlined is-fullwidth mt-2'>
+                            <button data-for="group_control" data-tip={ group.owner === authStore.id ? 
+                            'ถ้าคุณออกจากกลุ่มระบบจะสุ่มสมาชิกขึ้นเป็นหัวหน้าแทน' :'กดเพื่อออกจากกลุ่ม'}
+                             onClick={() => leave()} className='button is-danger is-outlined is-fullwidth mt-2'>
                                 <i className="bi bi-door-open-fill mr-2"></i> ออกจากกลุ่ม
                             </button>
                         </div>
@@ -177,7 +182,8 @@ const GroupID: NextPage = () => {
                 <div className='column'>
                     {
                         vote.length > 0 &&
-                        vote.map((item, index) => <VoteComponent
+                        vote.map((item, index) => <VoteComponent expire={item.timeout} select={item.select} 
+                        open={item.open}
                          id_user={authStore.id} idpost={item._id} group_owner={group.owner} idgroup={id as string}
                          owner={item.owner} header={item.header} key={index} />)
                     }

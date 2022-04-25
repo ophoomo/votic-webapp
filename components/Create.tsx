@@ -79,7 +79,8 @@ const Create: React.VFC = () => {
 
   return (
     <>
-      <button onClick={() => open()} className='button is-success is-outlined mr-2'>สร้างห้อง</button>
+      <button onClick={() => open()} data-for="home" data-tip="สร้างกลุ่มของท่าน"
+      className='button is-success is-outlined mr-2'>สร้างห้อง</button>
       <div className={`modal ${Status && 'is-active'}`}>
         <div onClick={() => close()} className="modal-background"></div>
         <div className="modal-content">
