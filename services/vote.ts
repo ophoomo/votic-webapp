@@ -41,10 +41,11 @@ export class Vote {
             }
         });
     }
-    remove() {
-        return axios.delete(``, {
+    remove(idgroup: string, idpost: string) {
+        return axios.delete(`${host}/vote/${idgroup}/${idpost}`, {
             headers: {
-                'Authorization' : 'Bearer ' + localStorage.getItem('token')
+                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                'Version-Header' : 1
             }
         });
     }

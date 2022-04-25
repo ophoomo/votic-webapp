@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -157,6 +158,9 @@ const GroupMember: NextPage = () => {
         <Navbar />
         <div className='container'>
             <HeaderGroup name={group.name} />
+            <Link href={`/group/${id}`}>
+                <button className='button is-success mt-5'>กลับ</button>
+            </Link>
             <div className='card mt-5'>
                 <div className="card-header">
                     <p className="card-header-title"><i className="bi bi-people-fill mr-2"></i> สมาชิกทั้งหมด</p>

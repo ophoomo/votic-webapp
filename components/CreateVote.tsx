@@ -60,8 +60,24 @@ const CreateVote: React.VFC<dataStruct> = ({id}) => {
     return true;
   }
 
+  const checkHaveSelect = () => {
+    if (select.length > 0) {
+      return true;
+    }
+    Swal.fire({
+      icon: 'warning',
+      title: 'คำเตือน',
+      text: 'กรุณาเพิ่มตัวเลือก',
+      timer: 5000,
+      timerProgressBar: true
+    });
+    return false;
+  }
+
   const onSubmit = () => {
-    if(IsNotEmpty('header', Data.current.header) && IsNotEmpty('timeout', Data.current.timeout) && checkSelect()) {
+    if(IsNotEmpty('header', Data.current.header) && IsNotEmpty('timeout', Data.current.timeout) && checkSelect() &&
+      checkHaveSelect()
+    ) {
         Swal.fire({
             icon: 'warning',
             title: 'คำเตือน',

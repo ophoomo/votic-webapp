@@ -120,7 +120,7 @@ const GroupID: NextPage = () => {
                         text: 'เกิดข้อผิดพลาดจากทางเซิฟเวอร์',
                     }).then(() => {
                         document.location.reload();
-                    })
+                    });
                 });
             }
         });
@@ -177,7 +177,9 @@ const GroupID: NextPage = () => {
                 <div className='column'>
                     {
                         vote.length > 0 &&
-                        vote.map((item, index) => <VoteComponent header={item.header} key={index} />)
+                        vote.map((item, index) => <VoteComponent
+                         id_user={authStore.id} idpost={item._id} group_owner={group.owner} idgroup={id as string}
+                         owner={item.owner} header={item.header} key={index} />)
                     }
                 </div>
             </div>
