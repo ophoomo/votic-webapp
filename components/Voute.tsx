@@ -14,20 +14,23 @@ interface dataStruct {
   expire: string;
   open: boolean;
   select: Array<string>;
+  voted: Array<string>;
+  score: Array<number>;
 }
 
 const Vote: React.VFC<dataStruct> = ({
   header,
   owner,
   id_user,
+  score,
   idpost,
   group_owner,
   idgroup,
   expire,
   open,
   select,
+  voted
 }) => {
-  const [status, setStatus] = useState(false);
 
   const [statusExpire, setStatusExpire] = useState(false);
 
@@ -126,6 +129,51 @@ const Vote: React.VFC<dataStruct> = ({
     setStatusExpire(true);
   };
 
+  const sendvote = (select: string) => {
+    Swal.fire({
+      icon: "warning",
+      title: "คำเตือน",
+      text: `คุณต้องการที่จะโหวต ${select} ใช่ หรือ ไม่?`,
+      timer: 5000,
+      timerProgressBar: true,
+      confirmButtonText: "ใช่",
+      cancelButtonText: "ไม่",
+      showCancelButton: true,
+    }).then((result) => {
+      if (result.value) {
+        const vote = new VoteService();
+        vote
+          .vote(idpost, select)
+          .then((res) => {
+            Swal.fire({
+              icon: res.data.status ? "success" : "warning",
+              title: res.data.status ? "สำเร็จ" : "คำเตือน",
+              text: res.data.message,
+            }).then(() => {
+              document.location.reload();
+            });
+          })
+          .catch(() => {
+            Swal.fire({
+              icon: "error",
+              title: "เกิดข้อผิดพลาด",
+              text: "เกิดข้อผิดพลาดจากทางเซิฟเวอร์",
+            }).then(() => {
+              document.location.reload();
+            });
+          });
+      }
+    });
+  }
+
+  const checkVoted = () : boolean => {
+    const data = voted.find(item => item === id_user);
+    if (data !== undefined) {
+      return true;
+    }
+    return false;
+  }
+
   useEffect(() => {
     checkExpire();
   }, []);
@@ -138,7 +186,7 @@ const Vote: React.VFC<dataStruct> = ({
           <p className="mr-5">
             วันเวลาปิด: {format_date(expire)[0]} {format_date(expire)[1]}{" "}
           </p>
-          {(statusExpire || !open) && <ResultVote />}
+          {(statusExpire || !open) && <ResultVote score={score} select={select} />}
           {(owner === id_user || id_user === group_owner) && (
             <>
               {open && !statusExpire && (
@@ -166,23 +214,26 @@ const Vote: React.VFC<dataStruct> = ({
         <div className="card-content">
           {open ? (
             statusExpire ? (
-              <h3 className="title is-1 has-text-centered has-text-danger">
+              <h3 className="title is-3 has-text-centered has-text-danger">
                 หมดเวลา
               </h3>
-            ) : (
+            ) : checkVoted() ? (
+              <h3 className="title is-3 has-text-centered has-text-success">คุณทำการโหวตเรียบร้อยแล้ว</h3>
+            )
+            : (
               <div
                 className="is-flex is-aligin-center is-justify-content-center is-flex-wrap-wrap"
                 style={{ gap: "10px" }}
               >
                 {select.map((item, index) => (
-                  <button key={index} className="button is-success is-large">
+                  <button key={index} onClick={() => sendvote(item)} className="button is-success is-large">
                     {item}
                   </button>
                 ))}
               </div>
             )
           ) : (
-            <h3 className="title is-1 has-text-centered has-text-danger">
+            <h3 className="title is-3 has-text-centered has-text-danger">
               ปิดโหวต
             </h3>
           )}

@@ -31,7 +31,7 @@ const Navbar: React.VFC = () => {
         }).then(result => {
           if (result.isConfirmed) {
             localStorage.removeItem('token');
-            router.push('/login');
+            window.location.href = "/login";
           }
         });
   }

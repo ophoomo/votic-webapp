@@ -182,8 +182,8 @@ const GroupID: NextPage = () => {
                 <div className='column'>
                     {
                         vote.length > 0 &&
-                        vote.map((item, index) => <VoteComponent expire={item.timeout} select={item.select} 
-                        open={item.open}
+                        vote.map((item, index) => <VoteComponent score={item.score} expire={item.timeout}
+                         select={item.select} open={item.open} voted={item.voted}
                          id_user={authStore.id} idpost={item._id} group_owner={group.owner} idgroup={id as string}
                          owner={item.owner} header={item.header} key={index} />)
                     }

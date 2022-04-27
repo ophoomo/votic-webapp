@@ -10,12 +10,13 @@ export class Vote {
             }
         });
     }
-    vote() {
-        return axios.post(``, {
-
+    vote(idpost: string, select: string) {
+        return axios.post(`${host}/vote/${idpost}/vote/`, {
+            select: select
         }, {
             headers: {
-                'Authorization' : 'Bearer ' + localStorage.getItem('token')
+                'Authorization' : 'Bearer ' + localStorage.getItem('token'),
+                'Version-Header' : 1
             }
         });
     }
