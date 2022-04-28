@@ -36,7 +36,8 @@ const ResultVote: React.VFC<DataStruct> = ({select, score}) => {
       data.push({select: select[index], score: score[index]});
     }
     data = data.sort((a,b) => {
-      if (a.score >= b.score) return -11;
+      if (a.score >= b.score) return 1;
+      if (a.score <= b.score) return -1;
       return 0;
     });
     setData(data);
